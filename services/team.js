@@ -1,47 +1,100 @@
 const Team = require("../models/team");
+const { imageUpload } = require("./image_upload"); 
 
 // Create a new team member
-exports.createTeamMember = async (data) => {
+exports.createTeamMember = async (req, res) => {
   try {
+    let imageUrl = "";
+    console.log("This is file : ",req.files)
+    if (req.files && req.files.imageFile) {
+      console.log("sending file : ",req.files.imageFile)
+      const uploadResponse = await imageUpload(req, res);
+      if (uploadResponse.success) {
+        imageUrl = uploadResponse.imageUrl;
+      } else {
+        return res.status(400).json({ success: false, message: uploadResponse.message });
+      }
+    }
+
+    const data = { ...req.body, image_url: imageUrl };
     const teamMember = new Team(data);
-    return await teamMember.save();
+    await teamMember.save();
+
+    return res.status(201).json({ success: true, teamMember });
   } catch (error) {
-    throw new Error("Error creating team member: " + error.message);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 // Get all team members
-exports.getAllTeamMembers = async () => {
+
+exports.getAllTeamMembers = async (req, res) => {
   try {
-    return await Team.find().sort({ createdAt: -1 }); // newest first
+    const teamMembers = await Team.find().populate("expertise").sort({ createdAt: -1 }); // newest first
+    return res.status(200).json({ success: true, teamMembers });
   } catch (error) {
-    throw new Error("Error fetching team members: " + error.message);
+    return res.status(500).json({ success: false, message: "Error fetching team members: " + error.message });
   }
 };
 
 // Get team member by ID
-exports.getTeamMemberById = async (id) => {
+exports.getTeamMemberById = async (req, res) => {
   try {
-    return await Team.findById(id);
+    const { id } = req.params;
+    const teamMember = await Team.findById(id);
+
+    if (!teamMember) {
+      return res.status(404).json({ success: false, message: "Team member not found" });
+    }
+
+    return res.status(200).json({ success: true, teamMember });
   } catch (error) {
-    throw new Error("Error fetching team member: " + error.message);
+    return res.status(500).json({ success: false, message: "Error fetching team member: " + error.message });
   }
 };
 
-// Update team member
-exports.updateTeamMember = async (id, data) => {
+
+
+
+exports.updateTeamMember = async (req, res) => {
   try {
-    return await Team.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    const { id } = req.params;
+    const data = { ...req.body };
+
+    if (req.files && req.files.imageFile) {
+      const uploadResponse = await imageUpload(req, res);
+      if (uploadResponse.success) {
+        data.image_url = uploadResponse.imageUrl;
+      } else {
+        return res.status(400).json({ success: false, message: uploadResponse.message });
+      }
+    }
+
+    const updatedTeamMember = await Team.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTeamMember) {
+      return res.status(404).json({ success: false, message: "Team member not found" });
+    }
+
+    return res.status(200).json({ success: true, teamMember: updatedTeamMember });
   } catch (error) {
-    throw new Error("Error updating team member: " + error.message);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 // Delete team member
-exports.deleteTeamMember = async (id) => {
+exports.deleteTeamMember = async (req, res) => {
   try {
-    return await Team.findByIdAndDelete(id);
+    const { id } = req.params;
+    const deleted = await Team.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ success: false, message: "Team member not found" });
+    return res.status(200).json({ success: true, message: "Deleted successfully" });
   } catch (error) {
-    throw new Error("Error deleting team member: " + error.message);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

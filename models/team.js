@@ -5,12 +5,12 @@ const TeamSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     designation: {
       type: String,
-      required: true,
+      // required: true,
     },
     expertise: [
       {
@@ -24,7 +24,7 @@ const TeamSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
       lowercase: true,
       trim: true,
@@ -51,8 +51,12 @@ const TeamSchema = new mongoose.Schema(
     },
     location: {
       type: [String],
-      required:true
+      // required:true
     },
+    image_url:{
+      type:String,
+      default:""
+    }
   },
   { timestamps: true }
 );

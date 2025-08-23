@@ -1,20 +1,25 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/database')
 const newsEventRoutes = require("./routes/news_events");
 const teamRoutes=require('./routes/team');
 const publicationRoutes=require('./routes/publications')
 const practiceareaRoutes=require('./routes/practice_area')
 const messagesRoutes=require('./routes/messages')
+const cloudinary = require("./config/cloudinary");
+const {PORT}=require('./config')
+const fileupload = require("express-fileupload");
 
-dotenv.config();
+
 
 const app = express();
-const PORT = process.env.PORT ;
+
 
 // Connect to MongoDB
 connectDB();
+
+//cloudinary connection
+cloudinary.cloudinaryConnect();
 
 // Middleware
 app.use(cors({
@@ -24,6 +29,11 @@ app.use(cors({
 app.use(express.json());
 
 
+
+app.use(fileupload({
+  useTempFiles : true,
+  tempFileDir : '/tmp/'
+}));
 
 // Routes
 app.get('/api/test', (req, res) => {
