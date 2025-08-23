@@ -41,7 +41,7 @@ exports.getAllTeamMembers = async (req, res) => {
 exports.getTeamMemberById = async (req, res) => {
   try {
     const { id } = req.params;
-    const teamMember = await Team.findById(id);
+    const teamMember = await Team.findById(id).populate("expertise");
 
     if (!teamMember) {
       return res.status(404).json({ success: false, message: "Team member not found" });
