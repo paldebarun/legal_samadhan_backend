@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const JobSchema = new mongoose.Schema({
   practices: {
-    type: String,
-    default: "",
+    type: [String],
+    default: [],
     trim: true
   },
   experience: {
