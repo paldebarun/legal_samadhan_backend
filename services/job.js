@@ -14,10 +14,10 @@ exports.createJob = async (req, res) => {
     });
 
     const savedJob = await newJob.save();
-    res.status(201).json(savedJob);
+    return res.status(201).json({ success: true, job: savedJob });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create job' });
+    return res.status(500).json({ success: false, message: 'Failed to create job', error: error.message });
   }
 };
 
@@ -25,10 +25,10 @@ exports.createJob = async (req, res) => {
 exports.getAllJobs = async (req, res) => {
   try {
     const jobs = await Job.find().sort({ createdAt: -1 });
-    res.status(200).json(jobs);
+    return res.status(200).json({ success: true, jobs });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch jobs' });
+    return res.status(500).json({ success: false, message: 'Failed to fetch jobs', error: error.message });
   }
 };
 
@@ -36,11 +36,13 @@ exports.getAllJobs = async (req, res) => {
 exports.getJobById = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
-    if (!job) return res.status(404).json({ error: 'Job not found' });
-    res.status(200).json(job);
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    return res.status(200).json({ success: true, job });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch job' });
+    return res.status(500).json({ success: false, message: 'Failed to fetch job', error: error.message });
   }
 };
 
@@ -52,22 +54,26 @@ exports.updateJob = async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-    if (!updatedJob) return res.status(404).json({ error: 'Job not found' });
-    res.status(200).json(updatedJob);
+    if (!updatedJob) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    return res.status(200).json({ success: true, job: updatedJob });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to update job' });
+    return res.status(500).json({ success: false, message: 'Failed to update job', error: error.message });
   }
 };
 
-// ✅ Delete a Job by ID
+
 exports.deleteJob = async (req, res) => {
   try {
     const deletedJob = await Job.findByIdAndDelete(req.params.id);
-    if (!deletedJob) return res.status(404).json({ error: 'Job not found' });
-    res.status(200).json({ message: 'Job deleted successfully' });
+    if (!deletedJob) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    return res.status(200).json({ success: true, message: 'Job deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to delete job' });
+    return res.status(500).json({ success: false, message: 'Failed to delete job', error: error.message });
   }
 };

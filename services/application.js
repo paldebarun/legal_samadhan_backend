@@ -34,10 +34,10 @@ exports.createApplication = async (req, res) => {
     });
 
     const savedApplication = await newApplication.save();
-    res.status(201).json(savedApplication);
+    return res.status(201).json({ success: true, application: savedApplication });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create application' });
+    return res.status(500).json({ success: false, message: 'Failed to create application', error: error.message });
   }
 };
 
@@ -47,10 +47,10 @@ exports.getAllApplications = async (req, res) => {
     const applications = await Application.find()
       .populate('job')
       .sort({ createdAt: -1 });
-    res.status(200).json(applications);
+    return res.status(200).json({ success: true, applications });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch applications' });
+    return res.status(500).json({ success: false, message: 'Failed to fetch applications', error: error.message });
   }
 };
 
@@ -58,11 +58,13 @@ exports.getAllApplications = async (req, res) => {
 exports.getApplicationById = async (req, res) => {
   try {
     const application = await Application.findById(req.params.id).populate('job');
-    if (!application) return res.status(404).json({ error: 'Application not found' });
-    res.status(200).json(application);
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    return res.status(200).json({ success: true, application });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch application' });
+    return res.status(500).json({ success: false, message: 'Failed to fetch application', error: error.message });
   }
 };
 
@@ -74,11 +76,13 @@ exports.updateApplication = async (req, res) => {
       req.body,
       { new: true, runValidators: true }
     );
-    if (!updatedApplication) return res.status(404).json({ error: 'Application not found' });
-    res.status(200).json(updatedApplication);
+    if (!updatedApplication) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    return res.status(200).json({ success: true, application: updatedApplication });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to update application' });
+    return res.status(500).json({ success: false, message: 'Failed to update application', error: error.message });
   }
 };
 
@@ -86,10 +90,12 @@ exports.updateApplication = async (req, res) => {
 exports.deleteApplication = async (req, res) => {
   try {
     const deletedApplication = await Application.findByIdAndDelete(req.params.id);
-    if (!deletedApplication) return res.status(404).json({ error: 'Application not found' });
-    res.status(200).json({ message: 'Application deleted successfully' });
+    if (!deletedApplication) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    return res.status(200).json({ success: true, message: 'Application deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to delete application' });
+    return res.status(500).json({ success: false, message: 'Failed to delete application', error: error.message });
   }
 };
