@@ -7,6 +7,9 @@ const publicationRoutes=require('./routes/publications')
 const practiceareaRoutes=require('./routes/practice_area')
 const messagesRoutes=require('./routes/messages')
 const cloudinary = require("./config/cloudinary");
+const jobRoutes = require('./routes/job');
+const applicationRoutes=require('./routes/application')
+
 const {PORT}=require('./config')
 const fileupload = require("express-fileupload");
 
@@ -20,6 +23,7 @@ connectDB();
 
 //cloudinary connection
 cloudinary.cloudinaryConnect();
+
 
 // Middleware
 app.use(cors({
@@ -37,14 +41,15 @@ app.use(fileupload({
 
 // Routes
 app.get('/api/test', (req, res) => {
-  res.json({ success: true, message: 'Vivaahutsav API is working! ' });
+  res.json({ success: true, message: 'Legal Samadhan API is working! ' });
 });
-
 app.use("/api/news-events", newsEventRoutes);
 app.use("/api/team_management", teamRoutes);
 app.use("/api/publications",publicationRoutes);
 app.use('/api/practice_area',practiceareaRoutes);
 app.use('/api/messages',messagesRoutes)
+app.use('/api/jobs', jobRoutes);
+app.use('/api/application',applicationRoutes)
 
 
 // Start Server
