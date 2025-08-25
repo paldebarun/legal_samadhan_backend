@@ -1,50 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const practiceAreaController = require("../services/practice_area");
+const practiceAreaController = require("../controllers/practice_area");
 
 // Create a new Practice Area
-router.post("/", async (req, res) => {
-  try {
-    await practiceAreaController.createPracticeArea(req, res);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+router.post("/", practiceAreaController.createPracticeArea);
 
 // Get all Practice Areas
-router.get("/", async (req, res) => {
-  try {
-    await practiceAreaController.getAllPracticeAreas(req, res);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.get("/", practiceAreaController.getAllPracticeAreas);
 
 // Get Practice Area by ID
-router.get("/:id", async (req, res) => {
-  try {
-    await practiceAreaController.getPracticeAreaById(req, res);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.get("/:id", practiceAreaController.getPracticeAreaById);
 
 // Update Practice Area
-router.put("/:id", async (req, res) => {
-  try {
-    await practiceAreaController.updatePracticeArea(req, res);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+router.put("/:id", practiceAreaController.updatePracticeArea);
 
 // Delete Practice Area
-router.delete("/:id", async (req, res) => {
-  try {
-    await practiceAreaController.deletePracticeArea(req, res);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.delete("/:id", practiceAreaController.deletePracticeArea);
 
 module.exports = router;

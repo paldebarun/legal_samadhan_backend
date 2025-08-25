@@ -1,48 +1,72 @@
 const Publication = require('../models/publications');
 
-exports.createPublication = async (data) => {
+// Create a new publication
+exports.createPublication = async (req, res) => {
   try {
-    const publication = new Publication(data);
-    return await publication.save();
+    const publication = new Publication(req.body);
+    const savedPublication = await publication.save();
+    return res.status(201).json({ success: true, publication: savedPublication });
   } catch (error) {
-    throw new Error('Error creating publication: ' + error.message);
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Failed to create publication', error: error.message });
   }
 };
 
 // Get all publications, sorted by published_on descending
-exports.getAllPublications = async () => {
+exports.getAllPublications = async (req, res) => {
   try {
-    return await Publication.find()
-      .populate("practice_area") 
+    const publications = await Publication.find()
+      .populate("practice_area")
       .sort({ published_on: -1 });
+    return res.status(200).json({ success: true, publications });
   } catch (error) {
-    throw new Error('Error fetching publications: ' + error.message);
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch publications', error: error.message });
   }
 };
 
 // Get a publication by ID
-exports.getPublicationById = async (id) => {
+exports.getPublicationById = async (req, res) => {
   try {
-    return await Publication.findById(id);
+    const publication = await Publication.findById(req.params.id);
+    if (!publication) {
+      return res.status(404).json({ success: false, message: 'Publication not found' });
+    }
+    return res.status(200).json({ success: true, publication });
   } catch (error) {
-    throw new Error('Error fetching publication: ' + error.message);
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch publication', error: error.message });
   }
 };
 
 // Update a publication by ID
-exports.updatePublication = async (id, data) => {
+exports.updatePublication = async (req, res) => {
   try {
-    return await Publication.findByIdAndUpdate(id, data, { new: true });
+    const updatedPublication = await Publication.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedPublication) {
+      return res.status(404).json({ success: false, message: 'Publication not found' });
+    }
+    return res.status(200).json({ success: true, publication: updatedPublication });
   } catch (error) {
-    throw new Error('Error updating publication: ' + error.message);
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Failed to update publication', error: error.message });
   }
 };
 
 // Delete a publication by ID
-exports.deletePublication = async (id) => {
+exports.deletePublication = async (req, res) => {
   try {
-    return await Publication.findByIdAndDelete(id);
+    const deletedPublication = await Publication.findByIdAndDelete(req.params.id);
+    if (!deletedPublication) {
+      return res.status(404).json({ success: false, message: 'Publication not found' });
+    }
+    return res.status(200).json({ success: true, message: 'Publication deleted successfully' });
   } catch (error) {
-    throw new Error('Error deleting publication: ' + error.message);
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Failed to delete publication', error: error.message });
   }
 };

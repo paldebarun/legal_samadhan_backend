@@ -4,52 +4,67 @@ const PracticeArea = require('../models/practice_area');
 exports.createPracticeArea = async (req, res) => {
   try {
     const practiceArea = new PracticeArea(req.body);
-    const saved = await practiceArea.save();
-    res.status(201).json(saved);
+    const savedPracticeArea = await practiceArea.save();
+    return res.status(201).json({ success: true, practiceArea: savedPracticeArea });
   } catch (error) {
-    res.status(400).json({ error: 'Error creating practice area: ' + error.message });
+    console.error(error);
+    return res.status(400).json({ success: false, message: 'Error creating practice area', error: error.message });
   }
 };
 
 // Get all Practice Areas
 exports.getAllPracticeAreas = async (req, res) => {
   try {
-    const areas = await PracticeArea.find().sort({ name: 1 });
-    res.status(200).json(areas);
+    const practiceAreas = await PracticeArea.find().sort({ name: 1 });
+    return res.status(200).json({ success: true, practiceAreas });
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching practice areas: ' + error.message });
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Error fetching practice areas', error: error.message });
   }
 };
 
 // Get Practice Area by ID
 exports.getPracticeAreaById = async (req, res) => {
   try {
-    const area = await PracticeArea.findById(req.params.id);
-    if (!area) return res.status(404).json({ message: 'Practice area not found' });
-    res.status(200).json(area);
+    const practiceArea = await PracticeArea.findById(req.params.id);
+    if (!practiceArea) {
+      return res.status(404).json({ success: false, message: 'Practice area not found' });
+    }
+    return res.status(200).json({ success: true, practiceArea });
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching practice area: ' + error.message });
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Error fetching practice area', error: error.message });
   }
 };
 
 // Update Practice Area
 exports.updatePracticeArea = async (req, res) => {
   try {
-    const updated = await PracticeArea.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ message: 'Practice area not found' });
-    res.status(200).json(updated);
+    const updatedPracticeArea = await PracticeArea.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedPracticeArea) {
+      return res.status(404).json({ success: false, message: 'Practice area not found' });
+    }
+    return res.status(200).json({ success: true, practiceArea: updatedPracticeArea });
   } catch (error) {
-    res.status(400).json({ error: 'Error updating practice area: ' + error.message });
+    console.error(error);
+    return res.status(400).json({ success: false, message: 'Error updating practice area', error: error.message });
   }
 };
 
 // Delete Practice Area
 exports.deletePracticeArea = async (req, res) => {
   try {
-    const deleted = await PracticeArea.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Practice area not found' });
-    res.status(200).json({ message: 'Deleted successfully' });
+    const deletedPracticeArea = await PracticeArea.findByIdAndDelete(req.params.id);
+    if (!deletedPracticeArea) {
+      return res.status(404).json({ success: false, message: 'Practice area not found' });
+    }
+    return res.status(200).json({ success: true, message: 'Practice area deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting practice area: ' + error.message });
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Error deleting practice area', error: error.message });
   }
 };

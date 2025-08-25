@@ -14,10 +14,14 @@ exports.createMessage = async (req, res) => {
     });
 
     const savedMessage = await newMessage.save();
-    res.status(201).json(savedMessage);
+    return res.status(201).json({ success: true, message: savedMessage });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create message' });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to create message',
+      error: error.message
+    });
   }
 };
 
@@ -25,10 +29,14 @@ exports.createMessage = async (req, res) => {
 exports.getAllMessages = async (req, res) => {
   try {
     const messages = await Message.find().sort({ createdAt: -1 });
-    res.status(200).json(messages);
+    return res.status(200).json({ success: true, messages });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch messages' });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch messages',
+      error: error.message
+    });
   }
 };
 
@@ -36,11 +44,17 @@ exports.getAllMessages = async (req, res) => {
 exports.getMessageById = async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
-    if (!message) return res.status(404).json({ error: 'Message not found' });
-    res.status(200).json(message);
+    if (!message) {
+      return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+    return res.status(200).json({ success: true, message });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch message' });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch message',
+      error: error.message
+    });
   }
 };
 
@@ -50,13 +64,19 @@ exports.updateMessage = async (req, res) => {
     const updatedMessage = await Message.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     );
-    if (!updatedMessage) return res.status(404).json({ error: 'Message not found' });
-    res.status(200).json(updatedMessage);
+    if (!updatedMessage) {
+      return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+    return res.status(200).json({ success: true, message: updatedMessage });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to update message' });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update message',
+      error: error.message
+    });
   }
 };
 
@@ -64,10 +84,16 @@ exports.updateMessage = async (req, res) => {
 exports.deleteMessage = async (req, res) => {
   try {
     const deletedMessage = await Message.findByIdAndDelete(req.params.id);
-    if (!deletedMessage) return res.status(404).json({ error: 'Message not found' });
-    res.status(200).json({ message: 'Message deleted successfully' });
+    if (!deletedMessage) {
+      return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+    return res.status(200).json({ success: true, message: 'Message deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to delete message' });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete message',
+      error: error.message
+    });
   }
 };
