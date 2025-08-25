@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const newsEventController = require("../controllers/news_events");
+const newsEventController = require("../services/news_events");
 
 // Create News/Event
 router.post("/", newsEventController.createNewsEvent);

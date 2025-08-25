@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const practiceAreaController = require("../controllers/practice_area");
+const practiceAreaController = require("../services/practice_area");
 
 // Create a new Practice Area
 router.post("/", practiceAreaController.createPracticeArea);

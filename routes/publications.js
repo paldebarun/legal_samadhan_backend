@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const publicationController = require('../controllers/publications');
+const publicationController = require('../services/publications');
 
 // Create a new publication
 router.post('/', publicationController.createPublication);
