@@ -3,13 +3,14 @@ const NewsEvent = require('../models/news_events');
 // Create News/Event
 exports.createNewsEvent = async (req, res) => {
   try {
-    const { title, description, date, category } = req.body;
+    const { title, description, date, category,linkedin_url } = req.body;
 
     const newNewsEvent = new NewsEvent({
       title,
       description,
       category,
       date: date || Date.now(), 
+      linkedin_url
     });
 
     const savedNewsEvent = await newNewsEvent.save();
