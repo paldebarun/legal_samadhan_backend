@@ -9,6 +9,7 @@ const messagesRoutes=require('./routes/messages')
 const cloudinary = require("./config/cloudinary");
 const jobRoutes = require('./routes/job');
 const applicationRoutes=require('./routes/application')
+const userRoutes=require('./routes/user')
 
 const {PORT}=require('./config')
 const fileupload = require("express-fileupload");
@@ -50,7 +51,7 @@ app.use('/api/practice_area',practiceareaRoutes);
 app.use('/api/messages',messagesRoutes)
 app.use('/api/jobs', jobRoutes);
 app.use('/api/application',applicationRoutes)
-
+app.use('/api/user',userRoutes)
 
 // Start Server
 app.listen(PORT, () => {
