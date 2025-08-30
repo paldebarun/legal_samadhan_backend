@@ -1,5 +1,5 @@
 const Team = require("../models/team");
-const { imageUpload } = require("./image_upload"); 
+const {uploadImageFile} =require('./image_upload')
 
 // Create a new team member
 // exports.createTeamMember = async (req, res) => {
