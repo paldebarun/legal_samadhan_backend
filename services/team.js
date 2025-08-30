@@ -79,19 +79,20 @@ exports.updateTeamMember = async (req, res) => {
     const { id } = req.params;
     const data = { ...req.body };
 
+    // Handle image upload
     if (req.files && req.files.imageFile) {
-      const uploadResponse = await imageUpload(req, res);
-      if (uploadResponse.success) {
-        data.image_url = uploadResponse.imageUrl;
-      } else {
-        return res.status(400).json({ success: false, message: uploadResponse.message });
-      }
+      data.image_url = await uploadImageFile(req.files.imageFile);
+    }
+
+    // Ensure expertise is an array
+    if (data.expertise && !Array.isArray(data.expertise)) {
+      data.expertise = [data.expertise];
     }
 
     const updatedTeamMember = await Team.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
-    });
+    }).populate("expertise");
 
     if (!updatedTeamMember) {
       return res.status(404).json({ success: false, message: "Team member not found" });
@@ -102,6 +103,7 @@ exports.updateTeamMember = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 
