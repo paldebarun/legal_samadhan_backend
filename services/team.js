@@ -10,17 +10,7 @@ exports.createTeamMember = async (req, res) => {
 
     const data = { ...req.body, image_url: imageUrl };
     
-    if (data.contacts) {
-      const contactsArr = data.contacts.split(",").map(c => c.trim()).filter(Boolean);
-      data.contacts = contactsArr.length > 1 ? contactsArr : contactsArr[0];
-    }
-
-    // Normalize location
-    if (data.location) {
-      const locationArr = data.location.split(",").map(l => l.trim()).filter(Boolean);
-      data.location = locationArr.length > 1 ? locationArr : locationArr[0];
-    }
-
+    console.log("This is the data : ",data)
 
     const teamMember = new Team(data);
     await teamMember.save();
@@ -70,18 +60,6 @@ exports.updateTeamMember = async (req, res) => {
     if (req.files && req.files.imageFile) {
       data.image_url = await uploadImageFile(req.files.imageFile);
     }
-
-    if (data.contacts) {
-      const contactsArr = data.contacts.split(",").map(c => c.trim()).filter(Boolean);
-      data.contacts = contactsArr.length > 1 ? contactsArr : contactsArr[0];
-    }
-
-    // Normalize location
-    if (data.location) {
-      const locationArr = data.location.split(",").map(l => l.trim()).filter(Boolean);
-      data.location = locationArr.length > 1 ? locationArr : locationArr[0];
-    }
-
 
     // Ensure expertise is an array
     if (data.expertise && !Array.isArray(data.expertise)) {
