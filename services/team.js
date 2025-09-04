@@ -12,6 +12,39 @@ exports.createTeamMember = async (req, res) => {
     
     console.log("This is the data : ",data)
 
+    if (data.contacts) {
+      if (Array.isArray(data.contacts)) {
+        // Case: ["12345,67890"]
+        data.contacts = data.contacts
+          .join(",") // merge into a single string
+          .split(",") // split back into array
+          .map((c) => c.trim())
+          .filter(Boolean);
+      } else if (typeof data.contacts === "string") {
+        // Case: "12345,67890"
+        data.contacts = data.contacts
+          .split(",")
+          .map((c) => c.trim())
+          .filter(Boolean);
+      }
+    }
+
+    // 🟢 Normalize location
+    if (data.location) {
+      if (Array.isArray(data.location)) {
+        data.location = data.location
+          .join(",")
+          .split(",")
+          .map((l) => l.trim())
+          .filter(Boolean);
+      } else if (typeof data.location === "string") {
+        data.location = data.location
+          .split(",")
+          .map((l) => l.trim())
+          .filter(Boolean);
+      }
+    }
+
     const teamMember = new Team(data);
     await teamMember.save();
 
