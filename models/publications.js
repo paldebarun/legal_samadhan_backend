@@ -27,7 +27,7 @@ const publicationSchema = new mongoose.Schema(
     },
     link: {
       type: String,
-      default: '',
+      default: 'none',
       trim: true,
      
     },
