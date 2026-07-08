@@ -40,6 +40,8 @@ app.use(fileupload({
   tempFileDir : '/tmp/'
 }));
 
+//this is just a flag
+
 // Routes
 app.get('/api/test', (req, res) => {
   res.json({ success: true, message: 'Legal Samadhan API is working! ' });
